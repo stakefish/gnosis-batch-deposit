@@ -15,7 +15,7 @@ yarn intall
 
 
 ## Smart contract workflow
-![workflow](https://i.imgur.com/Kkj47ly.png)
+![workflow](https://i.imgur.com/1iuFyUo.png)
 
 
 ## Functional tests
