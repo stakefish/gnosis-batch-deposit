@@ -13,6 +13,13 @@ yarn intall
 
 ## Deployment
 
+* `BatchDeposit`
+
+To deploy on the gnosis mainnet, first you need to setup environment variables `GNOSIS_RPC_URL` and `GNOSIS_DEPLOYER_PRIVATE_KEY`, and then simply run:
+
+```bash
+npx hardhat run scripts/deploy-batch-deposit.js --network gnosis
+```
 
 ## Smart contract workflow
 ![workflow](https://i.imgur.com/1iuFyUo.png)
