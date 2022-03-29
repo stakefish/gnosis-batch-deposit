@@ -9,7 +9,7 @@
 //  \/\____/ \ \__\ \__/.\_\\ \_\ \_\ \____\/\_\\ \_\  \ \_\/\____/ \ \_\ \_\
 //   \/___/   \/__/\/__/\/_/ \/_/\/_/\/____/\/_/ \/_/   \/_/\/___/   \/_/\/_/
 //
-// stakefish Eth2 Batch Deposit contract
+// stakefish Gnosis Batch Deposit contract
 //
 // ### WARNING ###
 // DO NOT USE THIS CONTRACT DIRECTLY. THIS CONTRACT IS ONLY TO BE USED 
