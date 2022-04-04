@@ -283,8 +283,12 @@ describe('BatchDeposit', () => {
     it("Can claim erc20 token by owner", async () => {
       const [owner] = await ethers.getSigners();
       const senderSigner = await ethers.getSigner(sender);
-      await gnoTokenContract.connect(senderSigner).transfer(batchDepositContract.address, ethers.utils.parseEther("0.05"));       
-      await batchDepositContract.claimTokens(gnoTokenAddress, owner.address);
+      const value = ethers.utils.parseEther("0.05");
+      await gnoTokenContract.connect(senderSigner).transfer(batchDepositContract.address, value);
+
+      const tx = batchDepositContract.claimTokens(gnoTokenAddress, owner.address);
+      await expect(tx).to.emit(batchDepositContract, "Withdrawn")
+        .withArgs(gnoTokenAddress, owner.address, value);
 
       const balance = await gnoTokenContract.balanceOf(owner.address);
       expect(balance).to.be.equal(ethers.utils.parseEther("0.05"));

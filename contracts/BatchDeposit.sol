@@ -9,7 +9,7 @@
 //  \/\____/ \ \__\ \__/.\_\\ \_\ \_\ \____\/\_\\ \_\  \ \_\/\____/ \ \_\ \_\
 //   \/___/   \/__/\/__/\/_/ \/_/\/_/\/____/\/_/ \/_/   \/_/\/___/   \/_/\/_/
 //
-// stakefish Eth2 Batch Deposit contract
+// stakefish Gnosis Batch Deposit contract
 //
 // ### WARNING ###
 // DO NOT USE THIS CONTRACT DIRECTLY. THIS CONTRACT IS ONLY TO BE USED 
@@ -37,17 +37,16 @@ contract BatchDeposit is IERC677Receiver, Pausable, Ownable, ReentrancyGuard, Cl
     address public immutable mGnoWrapper;
     address public immutable gnoToken;
 
-    uint256 constant PUBKEY_LENGTH = 48;
-    uint256 constant SIGNATURE_LENGTH = 96;
-    uint256 constant CREDENTIALS_LENGTH = 32;
-    uint256 constant MAX_VALIDATORS = 100;
-    uint256 constant DEPOSIT_AMOUNT = 32 ether;
+    uint256 private constant PUBKEY_LENGTH = 48;
+    uint256 private constant SIGNATURE_LENGTH = 96;
+    uint256 private constant CREDENTIALS_LENGTH = 32;
+    uint256 private constant DEPOSIT_AMOUNT = 1 ether;
 
     event FeeChanged(uint256 previousFee, uint256 newFee);
-    event Withdrawn(address indexed payee, uint256 weiAmount);
+    event Withdrawn(address indexed token, address indexed payee, uint256 weiAmount);
     event FeeCollected(address indexed payee, uint256 weiAmount);
 
-    constructor(address _gnoToken, address _mGnoWrapper, uint256 _fee) public {
+    constructor(address _gnoToken, address _mGnoWrapper, uint256 _fee) {
         require(_fee % 1 gwei == 0, "Fee must be a multiple of GWEI");
 
         gnoToken = _gnoToken;
@@ -64,15 +63,15 @@ contract BatchDeposit is IERC677Receiver, Pausable, Ownable, ReentrancyGuard, Cl
         require(token == gnoToken, "token is not GNO");
 
         // withdrawal credential (32)
-        // privat key (48) + signature (96) + deposit root (32)
+        // count * (privat key (48) + signature (96) + deposit root (32))
         require(data.length % 176 == 32, "Invalid data length");
         uint256 count = data.length / 176;
-        require(value == (1 ether + fee) * count, "Value is not aligned with validator count");
+        require(value == (DEPOSIT_AMOUNT + fee) * count, "Value is not aligned with validator count");
 
         totalValidator += count;
         emit FeeCollected(from, fee * count);
 
-        SBCToken(gnoToken).transferAndCall(mGnoWrapper, 1 ether * count, data);
+        SBCToken(gnoToken).transferAndCall(mGnoWrapper, DEPOSIT_AMOUNT * count, data);
 
         return true;
     }
@@ -84,7 +83,8 @@ contract BatchDeposit is IERC677Receiver, Pausable, Ownable, ReentrancyGuard, Cl
      * @param to address that will receive the locked tokens from this contract.
      */
     function claimTokens(address token, address to) external onlyOwner {
-        _claimValues(token, to);
+        uint256 value = _claimValues(token, to);
+        emit Withdrawn(token, to, value);
     }
 
     /**

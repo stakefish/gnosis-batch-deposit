@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: CC0-1.0
+// https://github.com/gnosischain/deposit-contract/blob/develop/contracts/utils/Claimable.sol
 
 pragma solidity 0.8.11;
 
@@ -6,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title Claimable
- * @dev Implementation of the claiming utils that can be useful for withdrawing accidentally sent tokens.
+ * @dev Implementation of the claiming utils that can be useful for withdrawing tokens and ether.
  */
 contract Claimable {
     /**
@@ -14,11 +15,11 @@ contract Claimable {
      * @param _token address of the claimed token or address(0) for native coins.
      * @param _to address of the tokens/coins receiver.
      */
-    function _claimValues(address _token, address _to) internal {
+    function _claimValues(address _token, address _to) internal returns (uint256) {
         if (_token == address(0)) {
-            _claimNativeCoins(_to);
+            return _claimNativeCoins(_to);
         } else {
-            _claimERC20Tokens(_token, _to);
+            return _claimERC20Tokens(_token, _to);
         }
     }
 
@@ -26,9 +27,10 @@ contract Claimable {
      * @dev Internal function for withdrawing all native coins from the contract.
      * @param _to address of the coins receiver.
      */
-    function _claimNativeCoins(address _to) internal {
+    function _claimNativeCoins(address _to) internal returns (uint256) {
         uint256 balance = address(this).balance;
         payable(_to).transfer(balance);
+        return balance;
     }
 
     /**
@@ -36,8 +38,9 @@ contract Claimable {
      * @param _token address of the claimed ERC20 token.
      * @param _to address of the tokens receiver.
      */
-    function _claimERC20Tokens(address _token, address _to) internal {
+    function _claimERC20Tokens(address _token, address _to) internal returns (uint256) {
         uint256 balance = IERC20(_token).balanceOf(address(this));
         IERC20(_token).transfer(_to, balance);
+        return balance;
     }
 }

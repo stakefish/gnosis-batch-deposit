@@ -5,8 +5,10 @@
     "@openzeppelin/contracts": "^4.5.0",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
+    "dotenv": "^16.0.0",
     "ethereum-waffle": "^4.0.0-alpha.1",
     "ethers": "^5.6.1",
+    "find-config": "^1.0.0",
     "hardhat": "^2.9.1"
   }
 }
