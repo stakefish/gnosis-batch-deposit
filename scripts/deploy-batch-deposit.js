@@ -15,7 +15,7 @@ const main = async () => {
   const factory = await Factory.deploy(
     currentNetwork.GNO_ADDRESS,
     currentNetwork.MGNO_ADDRESS,
-    ethers.utils.parseEther("0.05")
+    ethers.utils.parseEther(currentNetwork.STAKING_FEE)
   );
 
   console.log("BatchDeposit address:", factory.address);
